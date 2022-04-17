@@ -16,6 +16,25 @@ const selectors = [audioInputSelect, audioOutputSelect, videoSelect]
 
 audioOutputSelect.disabled = !('sinkId' in HTMLMediaElement.prototype)
 
+function download(url) {
+    var a = document.createElement('a')
+    a.download = 'Image.jpg'
+    a.href = url
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+}
+
+function capture(video) {
+    const w = video.videoWidth
+    const h = video.videoHeight
+    const canvas = document.createElement('canvas')
+    canvas.width = w
+    canvas.height = h
+    canvas.getContext('2d').drawImage(video, 0, 0, w, h)
+    return canvas
+}
+
 function gotDevices(deviceInfos) {
     // Handles being called several times to update labels. Preserve values.
     const values = selectors.map((select) => select.value)
@@ -119,5 +138,13 @@ audioInputSelect.onchange = start
 audioOutputSelect.onchange = changeAudioDestination
 
 videoSelect.onchange = start
+
+document.querySelector('button#shoot').onclick = () =>
+    download(capture(videoElement).toDataURL('image/jpeg'))
+
+const filtersSelect = document.querySelector('select#filter')
+filtersSelect.onchange = () => {
+    videoElement.className = filtersSelect.value
+}
 
 start()
