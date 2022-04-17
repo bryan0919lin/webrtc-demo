@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>WebRTC</title>
+    <style>
+        .none {
+            -webkit-filter: none;
+            filter: none;
+        }
+
+        .blur {
+            -webkit-filter: blur(2px);
+            filter: blur(2px);
+        }
+
+        .grayscale {
+            -webkit-filter: grayscale(1);
+            filter: grayscale(1);
+        }
+
+        .invert {
+            -webkit-filter: invert(1);
+            filter: invert(1);
+        }
+
+        .sepia {
+            -webkit-filter: sepia(1);
+            filter: sepia(1);
+        }
+    </style>
+</head>
+<body>
+<div>
+    <label>音訊輸入裝置:</label>
+    <select id="audioSource"></select>
+</div>
+
+<div>
+    <label>音訊輸出裝置:</label>
+    <select id="audioOutput"></select>
+</div>
+
+<div>
+    <label>視訊輸入裝置:</label>
+    <select id="videoSource"></select>
+</div>
+
+<div>
+    <label>濾鏡:</label>
+    <select id="filter">
+        <option value="none">None</option>
+        <option value="blur">Blur</option>
+        <option value="grayscale">Grayscale</option>
+        <option value="invert">Invert</option>
+        <option value="sepia">Sepia</option>
+    </select>
+</div>
+
+<video autoplay playsinline id="player"></video>
+<div><button id="shoot">拍照</button></div>
+<script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
+
+<script src="./js/main.js"></script>
+</body>
+</html>
