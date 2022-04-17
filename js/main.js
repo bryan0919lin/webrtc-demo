@@ -103,7 +103,7 @@ function changeAudioDestination() {
 
 function gotStream(stream) {
     videoElement.srcObject = stream
-
+    window.stream = stream
     return navigator.mediaDevices.enumerateDevices()
 }
 
@@ -146,5 +146,114 @@ const filtersSelect = document.querySelector('select#filter')
 filtersSelect.onchange = () => {
     videoElement.className = filtersSelect.value
 }
+
+//record
+let buffer
+let mediaRecorder
+
+const recvideo = document.querySelector('video#replayer');
+const btnRecord = document.querySelector('button#record');
+const btnPlay = document.querySelector('button#replay');
+const btnDownload = document.querySelector('button#download');
+
+function handleDataAvailable(e) {
+    if (e && e.data && e.data.size > 0) {
+        buffer.push(e.data)
+    }
+}
+
+function startRecord() {
+    buffer = []
+
+    var options = {
+        mimeType: 'video/webm;codecs=vp8',
+    }
+
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        console.error(`${options.mimeType} is not supported!`)
+        return
+    }
+
+    try {
+        mediaRecorder = new MediaRecorder(window.stream, options)
+    } catch (e) {
+        console.error('Failed to create MediaRecorder:', e)
+        return
+    }
+
+    mediaRecorder.ondataavailable = handleDataAvailable
+    mediaRecorder.start(10)
+}
+
+function stopRecord() {
+    mediaRecorder.stop()
+}
+
+btnRecord.onclick = () => {
+    if (btnRecord.textContent === '錄影') {
+        startRecord()
+        btnRecord.textContent = '停止'
+        btnPlay.disabled = true
+        btnDownload.disabled = true
+    } else {
+        stopRecord()
+        btnRecord.textContent = '錄影'
+        btnPlay.disabled = false
+        btnDownload.disabled = false
+    }
+}
+
+btnPlay.onclick = () => {
+    var blob = new Blob(buffer, { type: 'video/webm' })
+    recvideo.src = window.URL.createObjectURL(blob)
+    recvideo.srcObject = null
+    recvideo.controls = true
+    recvideo.play()
+}
+
+btnDownload.onclick = () => {
+    var blob = new Blob(buffer, { type: 'video/webm' })
+    var url = window.URL.createObjectURL(blob)
+    var a = document.createElement('a')
+
+    a.href = url
+    a.style.display = 'none'
+    a.download = 'video.webm'
+    a.click()
+}
+
+function getSupportedMimeTypes() {
+    const VIDEO_TYPES = ['webm', 'ogg', 'mp4', 'x-matroska']
+    const VIDEO_CODECS = [
+        'vp9', 'vp9.0', 'vp8', 'vp8.0', 'avc1', 'av1',
+        'h265', 'h.265', 'h264', 'h.264', 'opus'
+    ]
+
+    const supportedTypes = []
+    VIDEO_TYPES.forEach((videoType) => {
+        const type = `video/${videoType}`
+        VIDEO_CODECS.forEach((codec) => {
+            const variations = [
+                `${type};codecs=${codec}`,
+                `${type};codecs:${codec}`,
+                `${type};codecs=${codec.toUpperCase()}`,
+                `${type};codecs:${codec.toUpperCase()}`,
+                `${type}`,
+            ]
+            variations.forEach((variation) => {
+                if (MediaRecorder.isTypeSupported(variation))
+                    supportedTypes.push(variation)
+            })
+        })
+    })
+    return supportedTypes
+}
+
+const supportedMimeTypes = getSupportedMimeTypes()
+console.log('Best supported mime types by priority : ', supportedMimeTypes[0])
+console.log(
+    'All supported mime types ordered by priority : ',
+    supportedMimeTypes,
+)
 
 start()

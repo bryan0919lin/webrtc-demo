@@ -56,8 +56,16 @@
     </select>
 </div>
 
-<video autoplay playsinline id="player"></video>
-<div><button id="shoot">拍照</button></div>
+<div>
+    <video autoplay playsinline id="player"></video>
+    <video autoplay id="replayer"></video>
+</div>
+<div>
+    <button id="shoot">拍照</button>
+    <button id="record">錄影</button>
+    <button id="replay" disabled>回放</button>
+    <button id="download" disabled>下載</button>
+</div>
 <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
 <script src="./js/main.js"></script>
