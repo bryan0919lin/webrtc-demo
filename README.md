@@ -1,2 +1,14 @@
-# webrtc-demo
-This project is just a demo to present how WebRTC works
+# WebRTC Demo
+
+## Get Started
+
+```shell
+git clone https://github.com/bryan0919lin/webrtc-demo.git
+cd webrtc-demo
+npm install
+node server.js
+```
+
+## Launch Demo
+
+Visit <http://localhost:8088/>
